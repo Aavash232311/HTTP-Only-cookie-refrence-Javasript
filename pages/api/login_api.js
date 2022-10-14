@@ -1,11 +1,13 @@
 import csrf from '../../utils/cerf';
+import cookie from 'cookie';
+
 const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 let CryptoJS = require("crypto-js");
 let jwt = require('jsonwebtoken');
 
 export default async function login(req, res) {
-    await csrf(req, res);
+    const csrfToken = await csrf(req, res);
 
     if (req.method === 'POST') {
 
@@ -14,7 +16,13 @@ export default async function login(req, res) {
                 where: {
                     password: CryptoJS.SHA256(password).toString(), email: dict['email']
                 }, select: {
-                    password: true, email: true, full_name: true, class_name: true, student: true, active: true
+                    password: true,
+                    email: true,
+                    full_name: true,
+                    class_name: true,
+                    student: true,
+                    active: true,
+                    id: true
                 }
             });
         }
@@ -36,13 +44,24 @@ export default async function login(req, res) {
                     name: queryset[0]['full_name'],
                     class_name: queryset[0]['class_name'],
                     email: queryset[0]['email'],
-                    student: queryset[0]['student']
+                    student: queryset[0]['student'],
+                    id: queryset[0]['id']
 
                 }
 
-                jwt.sign({tokenArgs}, '', function (err, token) {
+                jwt.sign({tokenArgs}, process.env.JWT_SECRET_KEY, function (err, token) {
+                    res.setHeader(
+                        "Set-Cookie",
+                        cookie.serialize("token", token, {
+                            httpOnly: true,
+                            secure: process.env.NODE_ENV !== "development",
+                            maxAge: 60 * 60,
+                            sameSite: "strict",
+                            path: "/",
+                        })
+                    );
                     return res.status(200).json({
-                        message: "valid", server_permit: token, success: true, username: queryset[0]['full_name']
+                        message: "valid", success: true, username: queryset[0]['full_name']
                     });
                 }, {expiresIn: '1h'});
             } else {

@@ -7,16 +7,26 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Router from "next/router";
+import csrf from "../utils/cerf";
 
 
-export default function Nav() {
+export async function getServerSideProps(context) {
+    const {req, res} = context
+    await csrf(req, res)
+    return {
+        props: {csrfToken: req.csrfToken()},
+    }
+}
+
+
+export default function Nav({csrfToken}) {
     const [log, setLog] = React.useState(false);
     const [user, setUser] = React.useState("");
     // temp validation just for display
     React.useEffect(() => {
-        let tk = localStorage.getItem('token');
+        let tk = localStorage.getItem("username");
         if (tk !== null) {
-            setUser(localStorage.getItem("username"));
+            setUser(tk);
             setLog(true);
         } else {
             setLog(false);
@@ -28,7 +38,7 @@ export default function Nav() {
         if (params.bool === true) {
             return (
                 <div>
-                    <Button color="inherit">{user}</Button>
+                    <Button color="inherit">Sir. {user}</Button>
                 </div>
             )
         } else {
@@ -36,12 +46,23 @@ export default function Nav() {
         }
     }
 
+    const logout = () => {
+        const request = new Request('/api/logout', {
+            headers: {'Content-Type': 'application/json', 'CSRF-Token': csrfToken}
+        });
+        fetch(request, {
+            method: 'post',
+            mode: "same-origin",
+            body: JSON.stringify({})
+        }).then();
+    }
+
     const NavMainLogic = (params) => {
         if (params.bool) {
             return (
                 <div>
                     <Button onClick={() => {
-                        localStorage.removeItem('token');
+                        logout();
                         setLog(false);
                     }} color="inherit">Logout</Button>
                 </div>
@@ -53,7 +74,7 @@ export default function Nav() {
                         Router.push('/login')
                     }} color="inherit">Login</Button>
                     <Button onClick={() => {
-                        Router.push('/register')
+                        Router.push('/register');
                     }} color="inherit">Register</Button>
                 </div>
             );

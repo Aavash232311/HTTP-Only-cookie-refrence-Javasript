@@ -13,4 +13,4 @@ export function csrf(req, res) {
     })
 }
 
-export default csrf
+export default csrf;

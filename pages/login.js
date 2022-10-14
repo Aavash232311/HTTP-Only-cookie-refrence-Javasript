@@ -25,13 +25,13 @@ export async function getServerSideProps(context) {
 
 function Copyright(props) {
     return (<Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="/">
-                Notes App
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>);
+        {'Copyright © '}
+        <Link color="inherit" href="/">
+            Notes App
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+    </Typography>);
 }
 
 const theme = createTheme();
@@ -52,12 +52,9 @@ export default function Login({csrfToken}) {
             }),
         }).then((rsp => rsp.json())).then(function (response) {
             if (response.success === true) {
-                let permit_hash = response['server_permit'];
-                if (permit_hash.length > 0) {
-                    localStorage.setItem('token', permit_hash);
-                    localStorage.setItem('username', response.username);
-                    Router.push('/');
-                }
+                localStorage.setItem('username', response.username);
+                Router.push('/');
+
             } else {
                 setErr(true);
             }
@@ -69,7 +66,7 @@ export default function Login({csrfToken}) {
     const Incorrect = (params) => {
         if (params.bool === true) {
             return (<div><Alert severity="error">Incorrect username or password, or account may no be verified</Alert>
-                </div>)
+            </div>)
         } else {
             return null;
         }
@@ -77,73 +74,76 @@ export default function Login({csrfToken}) {
 
 
     return (<div>
-            <Nav/>
-            <div>
-                <ThemeProvider theme={theme}>
-                    <Container component="main" maxWidth="xs">
-                        <CssBaseline/>
-                        <Box
-                            sx={{
-                                marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center',
-                            }}
-                        >
-                            <Typography style={{color: "black"}} component="h1" variant="h5">
-                                Sign in
-                            </Typography>
-                            <Box component="form" onSubmit={(ev) => {
-                                loginFormSubmit(ev)
-                            }} noValidate sx={{mt: 1}}>
-                                <TextField
-                                    inputProps={{ref: email}}
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email Address"
-                                    name="email"
-                                    autoFocus
-                                />
-                                <TextField
-                                    inputProps={{ref: password}}
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                />
-                                <FormControlLabel style={{color: "black"}}
-                                                  control={<Checkbox value="remember"/>}
-                                                  label="Remember me"
-                                />
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{mt: 3, mb: 2}}
-                                >
-                                    Sign In
-                                </Button>
-                                <Grid container>
-                                    <Grid item xs>
-                                        <Link href="#" variant="body2">
-                                            Forgot password?
-                                        </Link>
-                                    </Grid>
-                                    <Grid item>
-                                        <Link href="#" variant="body2">
-                                            {"Don't have an account? Sign Up"}
-                                        </Link>
-                                    </Grid>
+        <Nav/>
+        <div>
+            <ThemeProvider theme={theme}>
+                <Container component="main" maxWidth="xs">
+                    <CssBaseline/>
+                    <Box
+                        sx={{
+                            marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                        }}
+                    >
+                        <Typography style={{color: "black"}} component="h1" variant="h5">
+                            Sign in
+                        </Typography>
+                        <Box component="form" onSubmit={(ev) => {
+
+                        }} noValidate sx={{mt: 1}}>
+                            <TextField
+                                inputProps={{ref: email}}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoFocus
+                            />
+                            <TextField
+                                inputProps={{ref: password}}
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                            />
+                            <FormControlLabel style={{color: "black"}}
+                                              control={<Checkbox value="remember"/>}
+                                              label="Remember me"
+                            />
+                            <Button
+                                onClick={(ev) => {
+                                    loginFormSubmit(ev);
+                                }}
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{mt: 3, mb: 2}}
+                            >
+                                Log In
+                            </Button>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
                                 </Grid>
-                            </Box>
-                        </Box> <br/> <br/>
-                        <Incorrect bool={err}/>
-                        <Copyright sx={{mt: 8, mb: 4}}/>
-                    </Container>
-                </ThemeProvider>
-            </div>
-        </div>)
+                                <Grid item>
+                                    <Link href="#" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Box> <br/> <br/>
+                    <Incorrect bool={err}/>
+                    <Copyright sx={{mt: 8, mb: 4}}/>
+                </Container>
+            </ThemeProvider>
+        </div>
+    </div>)
 }
 

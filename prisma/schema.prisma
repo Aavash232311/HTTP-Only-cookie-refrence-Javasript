@@ -10,17 +10,26 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-
 model User {
-    full_name String
-    password String
-    email String   @unique
-    id String @id @default(cuid())
-    createdAt DateTime @default(now())
-    active Boolean @default(false)
-    attempt Int
-    one_time_password Int
-    mail_sent DateTime @default(now())
-    class_name String
-    student Boolean @default(true)
+  full_name         String
+  password          String
+  email             String      @unique
+  id                String      @id @default(cuid())
+  createdAt         DateTime    @default(now())
+  active            Boolean     @default(false)
+  attempt           Int
+  one_time_password Int
+  mail_sent         DateTime    @default(now())
+  class_name        String
+  student           Boolean     @default(true)
+  ClassRoom         Channel[]
+}
+
+model Channel {
+  id        Int    @id @default(autoincrement())
+  user      User   @relation(fields: [authorId], references: [id])
+  authorId  String
+  name String
+  Grade String
+  SubjectName String
 }

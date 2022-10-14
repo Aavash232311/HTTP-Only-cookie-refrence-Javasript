@@ -17,7 +17,7 @@ export const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'aavash3150@gmail.com',
-        pass: ""
+        pass: "rkxpdhpitheuzzrn"
     }
 });
 export const senderGmail = 'aavash3150@gmail.com'
@@ -118,7 +118,6 @@ export default async function handler(req, res) {
                 }
             } else {
                 let err = schema.validate('joke', {details: true});
-                console.log(attr['password1'])
                 res.status(200).json({message: err, verification: false});
             }
             // error
